@@ -2,7 +2,8 @@
 //! with LTO, so one program per file meant one link and one LTO pass per file. Each file here is a
 //! module of this program instead. A new file needs its `mod` line below, which
 //! `every_ui_test_file_is_a_module` checks. One file's tests:
-//! `cargo test -p filmcraft-ui-egui --test ui color_ui::`.
+//! `cargo test -p filmcraft-ui-egui --test ui color_ui::`. A file whose tests need a process of their
+//! own stays in `tests/` and is named in `OWN_PROGRAM` below.
 
 mod audio51_ui;
 mod audio_fx_editor_ui;
@@ -49,7 +50,6 @@ mod playback_clock_ui;
 mod project_panel_ui;
 mod properties_scroll_ui;
 mod remix_ui;
-mod robustness_ui;
 mod scripted;
 mod sequence_tabs_ui;
 mod sequence_ui;
@@ -84,7 +84,9 @@ mod voiceover_ui;
 mod workspaces_ui;
 
 /// Files left in `tests/` that need a process of their own, each its own test program.
-const OWN_PROGRAM: &[&str] = &[];
+/// `robustness_ui` injects frame-job panics through a process-wide counter that every frame worker
+/// in the process takes from, and installs the crash hook that records the last panic.
+const OWN_PROGRAM: &[&str] = &["robustness_ui"];
 
 /// A file in `tests/ui/` without its `mod` line would never build or run, and a new file in `tests/`
 /// would be a test program of its own again.

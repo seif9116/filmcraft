@@ -177,7 +177,10 @@ The UI tests are one test program, `crates/ui-egui/tests/ui/main.rs`, and each f
 module of it. Every test program links the whole app, in release with LTO, so one program per file
 meant one link and one LTO pass per file. A new file goes in `tests/ui/` with a `mod` line in
 `main.rs` (`every_ui_test_file_is_a_module` fails without one). One file's tests:
-`cargo test --release -p filmcraft-ui-egui --test ui color_ui::`.
+`cargo test --release -p filmcraft-ui-egui --test ui color_ui::`. A file whose tests change
+process-wide state that other tests' workers would see stays in `tests/` as a program of its own and
+is named in `OWN_PROGRAM` in `main.rs`: `robustness_ui.rs` injects frame-job panics that any frame
+worker in the process can take (`cargo test --release -p filmcraft-ui-egui --test robustness_ui`).
 
 `crates/ui-egui/tests/ui/scripted.rs` runs the real `FilmcraftApp` under
 [`egui_kittest`](https://docs.rs/egui_kittest) (`build_eframe`): no window, no GPU, no OS event loop.
